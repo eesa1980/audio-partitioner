@@ -17,7 +17,7 @@ import {
   fancyTimeFormat,
   getSpritesLs,
   initStart,
-  jsonSyntaxHighlight,
+  jsonSyntaxHighlightcode,
   setSpritesLs,
 } from "./helpers";
 
