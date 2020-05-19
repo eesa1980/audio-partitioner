@@ -71,7 +71,7 @@ const App = () => {
         flexDirection: "column",
       }}
     >
-      <Container maxWidth="sm" align="center">
+      <Container align="center">
         <Paper elevation={3} style={{ padding: 30 }}>
           <Typography component="h1" variant="h5">
             {process.env.REACT_APP_ENV_TITLE}
@@ -107,7 +107,7 @@ const App = () => {
             <Button
               color="primary"
               variant="contained"
-              disabled={!!start || Object.keys(sprites) > 1}
+              disabled={!!start && Object.keys(sprites).length >= 1}
               onClick={() => setStart(duration)}
             >
               Start
@@ -116,7 +116,11 @@ const App = () => {
               color="primary"
               variant="contained"
               disabled={!start}
-              onClick={() => setEnd(duration)}
+              onClick={() =>
+                setEnd(
+                  audioRef.current && audioRef.current.getCurrentTime() * 1000
+                )
+              }
             >
               End
             </Button>
@@ -147,6 +151,11 @@ const App = () => {
                   styles={{ padding: "10px" }}
                   color="secondary"
                   key={key}
+                  onClick={() => {
+                    audioRef.current.seekTo(st / 1000);
+                    // setStart(st);
+                    // setEnd(dur + st);
+                  }}
                   label={
                     <span>
                       <strong>{i + 1}) &nbsp;&nbsp;</strong>
@@ -163,26 +172,37 @@ const App = () => {
             ref={audioRef}
             url={process.env.REACT_APP_ENV_AUDIO_FILE}
             controls
-            progressInterval={100}
+            progressInterval={1}
             height={54}
             style={{
               padding: "20px 0",
             }}
             width={"100%"}
             onProgress={(e) => {
-              setDuration(e.playedSeconds * 1000 || start);
+              setDuration(e.playedSeconds * 1000);
             }}
           />
-
-          <Typography color="textSecondary" component="pre" variant="body2">
-            <code style={{ whiteSpace: "pre-wrap" }}>
-              <div
-                dangerouslySetInnerHTML={createMarkup(
-                  jsonSyntaxHighlight(JSON.stringify(sprites, null, 2))
-                )}
-              />
-            </code>
-          </Typography>
+          <Container align="left">
+            <Typography color="textSecondary" component="pre" variant="body2">
+              <code style={{ whiteSpace: "pre-wrap" }}>
+                <div
+                  dangerouslySetInnerHTML={createMarkup(
+                    jsonSyntaxHighlight(JSON.stringify(sprites, null, 2))
+                  )}
+                />
+              </code>
+            </Typography>
+            <br />
+            <Typography color="textSecondary" component="pre" variant="body2">
+              <code style={{ whiteSpace: "pre-wrap" }}>
+                <div
+                  dangerouslySetInnerHTML={createMarkup(
+                    JSON.stringify(sprites)
+                  )}
+                />
+              </code>
+            </Typography>
+          </Container>
         </Paper>
       </Container>
     </div>
